@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "opendrive/gen/auth/v1;authv1";
+
+// PublicAuthService - 面向前端客户端的公共认证服务
+service PublicAuthService {
+  // 用户登录
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  // 用户注册
+  rpc Register(RegisterRequest) returns (RegisterResponse) {}
+  // 刷新令牌
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {}
+  // 获取当前用户信息
+  rpc Whoami(WhoamiRequest) returns (WhoamiResponse) {}
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string username = 3;
+  string avatar = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+// PublicAuthService 的请求和响应
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  User user = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message RegisterRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  User user = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+}
+
+message WhoamiRequest {}
+
+message WhoamiResponse {
+  User user = 1;
+}

@@ -1,0 +1,12 @@
+services:
+  opendrive:
+    container_name: opendrive
+    image: golang:1.24.1-alpine
+    ports:
+      - "8080:8080"
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+        - .:/app
+    command: go run main.go

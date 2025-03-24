@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package file.v1;
+
+option go_package = "opendrive/gen/file/v1;filev1";
+
+// 文件服务 - 提供文件管理的基本功能
+service FileService {
+  // 上传文件
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse) {}
+  // 下载文件
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse) {}
+  // 列出用户文件
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse) {}
+  // 获取文件信息
+  rpc GetFileInfo(GetFileInfoRequest) returns (GetFileInfoResponse) {}
+  // 删除文件
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse) {}
+  // 分享文件
+  rpc ShareFile(ShareFileRequest) returns (ShareFileResponse) {}
+  // 创建文件夹
+  rpc CreateFolder(CreateFolderRequest) returns (CreateFolderResponse) {}
+}
+
+// 文件元数据
+message FileMetadata {
+  string id = 1;
+  string name = 2;
+  string path = 3;
+  int64 size = 4;
+  string mime_type = 5;
+  string user_id = 6;
+  bool is_folder = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
+  string parent_id = 10;
+  bool is_shared = 11;
+  map<string, string> attributes = 12;
+}
+
+// 上传文件请求
+message UploadFileRequest {
+  // 文件元数据
+  string name = 1;
+  string parent_id = 2; // 父文件夹ID，根目录则为空
+  string mime_type = 3;
+  // 文件内容，分块上传
+  bytes content = 4;
+}
+
+// 上传文件响应
+message UploadFileResponse {
+  FileMetadata file = 1;
+}
+
+// 下载文件请求
+message DownloadFileRequest {
+  string file_id = 1;
+}
+
+// 下载文件响应
+message DownloadFileResponse {
+  bytes content = 1;
+  int64 offset = 2;
+  bool is_last = 3;
+}
+
+// 列出文件请求
+message ListFilesRequest {
+  string parent_id = 1; // 要列出的文件夹ID，根目录则为空
+  int32 page = 2;
+  int32 page_size = 3;
+  string sort_by = 4; // 排序字段: name, size, created_at, updated_at
+  bool ascending = 5; // 是否升序排序
+}
+
+// 列出文件响应
+message ListFilesResponse {
+  repeated FileMetadata files = 1;
+  int32 total_count = 2;
+}
+
+// 获取文件信息请求
+message GetFileInfoRequest {
+  string file_id = 1;
+}
+
+// 获取文件信息响应
+message GetFileInfoResponse {
+  FileMetadata file = 1;
+}
+
+// 删除文件请求
+message DeleteFileRequest {
+  string file_id = 1;
+  bool recursive = 2; // 对文件夹，是否递归删除
+}
+
+// 删除文件响应
+message DeleteFileResponse {
+  bool success = 1;
+}
+
+// 分享文件请求
+message ShareFileRequest {
+  string file_id = 1;
+  repeated string user_ids = 2; // 要分享给的用户ID列表
+  bool is_public = 3; // 是否公开分享（任何人可访问）
+  int64 expire_at = 4; // 过期时间，0表示永不过期
+}
+
+// 分享文件响应
+message ShareFileResponse {
+  string share_id = 1;
+  string share_url = 2;
+}
+
+// 创建文件夹请求
+message CreateFolderRequest {
+  string name = 1;
+  string parent_id = 2; // 父文件夹ID，根目录则为空
+}
+
+// 创建文件夹响应
+message CreateFolderResponse {
+  FileMetadata folder = 1;
+}

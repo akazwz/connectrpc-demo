@@ -1,0 +1,12 @@
+version: v2
+plugins:
+  - local: protoc-gen-go
+    out: backend/gen
+    opt: paths=source_relative
+  - local: protoc-gen-connect-go
+    out: backend/gen
+    opt: paths=source_relative
+  - local: protoc-gen-es
+    out: frontend/app/gen
+    include_imports: true
+    opt: target=ts
